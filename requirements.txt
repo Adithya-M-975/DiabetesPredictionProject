@@ -3,5 +3,5 @@ numpy
 pandas
 scikit-learn
 gunicorn
-tensorflow
+tensorflow==2.16.1
 
