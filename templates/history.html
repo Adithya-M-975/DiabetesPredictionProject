@@ -15,6 +15,11 @@
 <h3>Prediction Analytics</h3>
 
 <canvas id="pieChart" width="100" height="100"></canvas>
+<br><br>
+
+<h3>Age Distribution</h3>
+
+<canvas id="barChart" width="600" height="250"></canvas>
 <hr>
 
 <table border="1">
@@ -67,6 +72,26 @@ new Chart(ctx, {
     }
 });
 
+const barCtx = document.getElementById('barChart');
+
+new Chart(barCtx, {
+    type: 'bar',
+    data: {
+        labels: [
+            {% for age in age_labels %}
+                "{{ age }}",
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Age',
+            data: [
+                {% for age in age_labels %}
+                    {{ age }},
+                {% endfor %}
+            ]
+        }]
+    }
+});
 </script>
 
 </body>

@@ -91,7 +91,6 @@ def history():
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM predictions")
-
     records = cursor.fetchall()
 
     total_predictions = len(records)
@@ -106,7 +105,7 @@ def history():
         if row[9] == "Non-Diabetic"
     )
 
-
+    age_labels = [row[8] for row in records]
 
     conn.close()
 
@@ -115,8 +114,9 @@ def history():
         records=records,
         total_predictions=total_predictions,
         diabetic_count=diabetic_count,
-        non_diabetic_count=non_diabetic_count
-    ) 
+        non_diabetic_count=non_diabetic_count,
+        age_labels=age_labels
+    )
 
 # Run app
 if __name__ == "__main__":
