@@ -46,11 +46,17 @@ def predict():
     scaled_data = scaler.transform(input_data)
 
     prediction = model.predict(scaled_data)
+    probability = model.predict_proba(scaled_data)
 
     if prediction[0] == 1:
         result = "Diabetic"
     else:
         result = "Non-Diabetic"
+    
+    confidence = round(
+        max(probability[0]) * 100,
+        2
+    )
     
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -81,7 +87,8 @@ def predict():
 
     return render_template(
         'index.html',
-        prediction_text=result
+        prediction_text=result,
+        confidence=confidence
     )
 
 @app.route('/history')

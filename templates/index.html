@@ -107,9 +107,14 @@
         </form>
 
         {% if prediction_text %}
-            <div class="result">
-                {{ prediction_text }}
-            </div>
+        <div class="result">
+           {{ prediction_text }}
+
+           <br><br>
+
+           Confidence:
+           {{ confidence }}%
+        </div>
         {% endif %}
 
     </div>
