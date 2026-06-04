@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import pickle
 import numpy as np
+import sqlite3
 
 # Load trained XGBoost model
 model = pickle.load(open("xgboost_model.pkl", "rb"))
@@ -40,9 +41,39 @@ def predict():
         result = "Diabetic"
     else:
         result = "Non-Diabetic"
+    
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
 
-    return render_template('index.html', prediction_text=result)
+    cursor.execute("""
+    INSERT INTO predictions
+    (pregnancies, glucose, bloodpressure,
+    skinthickness, insulin, bmi,
+    dpf, age, prediction)
+
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """,
+    (
+        pregnancies,
+        glucose,
+        bloodpressure,
+        skinthickness,
+        insulin,
+        bmi,
+        dpf,
+        age,
+        result
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return render_template(
+        'index.html',
+        prediction_text=result
+    )
+    
 
 # Run app
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=False)
