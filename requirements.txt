@@ -1,7 +1,6 @@
-flask
+Flask
 numpy
 pandas
 scikit-learn
+xgboost
 gunicorn
-tensorflow==2.16.1
-

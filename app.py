@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request
 import pickle
 import numpy as np
-from tensorflow.keras.models import load_model
 
-# Load ANN model
-model = load_model("diabetes_ann_model.keras")
+# Load trained XGBoost model
+model = pickle.load(open("xgboost_model.pkl", "rb"))
 
 # Load scaler
 scaler = pickle.load(open("scaler.pkl", "rb"))
@@ -20,36 +19,30 @@ def home():
 # Prediction route
 @app.route('/predict', methods=['POST'])
 def predict():
-    try:
-        pregnancies = float(request.form['pregnancies'])
-        glucose = float(request.form['glucose'])
-        bloodpressure = float(request.form['bloodpressure'])
-        skinthickness = float(request.form['skinthickness'])
-        insulin = float(request.form['insulin'])
-        bmi = float(request.form['bmi'])
-        dpf = float(request.form['dpf'])
-        age = float(request.form['age'])
 
-        input_data = np.array([[pregnancies, glucose, bloodpressure,
-                                skinthickness, insulin, bmi, dpf, age]])
+    pregnancies = float(request.form.get('pregnancies', 0))
+    glucose = float(request.form.get('glucose', 0))
+    bloodpressure = float(request.form.get('bloodpressure', 0))
+    skinthickness = float(request.form.get('skinthickness', 0))
+    insulin = float(request.form.get('insulin', 0))
+    bmi = float(request.form.get('bmi', 0))
+    dpf = float(request.form.get('dpf', 0))
+    age = float(request.form.get('age', 0))
 
-        scaled_data = scaler.transform(input_data)
+    input_data = np.array([[pregnancies, glucose, bloodpressure,
+                            skinthickness, insulin, bmi, dpf, age]])
 
-        prediction = model.predict(scaled_data)
+    scaled_data = scaler.transform(input_data)
 
-        print("Prediction:", prediction)
+    prediction = model.predict(scaled_data)
 
-        if prediction[0][0] > 0.5:
-            result = "Diabetic"
-        else:
-            result = "Non-Diabetic"
+    if prediction[0] == 1:
+        result = "Diabetic"
+    else:
+        result = "Non-Diabetic"
 
-        return render_template('index.html', prediction_text=result)
+    return render_template('index.html', prediction_text=result)
 
-    except Exception as e:
-        print("ERROR:", e)
-        return str(e)
-
-# Run Flask app
+# Run app
 if __name__ == "__main__":
     app.run(debug=True)
