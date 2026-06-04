@@ -15,7 +15,17 @@ app = Flask(__name__)
 # Home page
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('login.html')
+@app.route('/login', methods=['POST'])
+def login():
+
+    username = request.form['username']
+    password = request.form['password']
+
+    if username == "admin" and password == "1234":
+        return render_template('index.html')
+
+    return "Invalid Username or Password"
 
 # Prediction route
 @app.route('/predict', methods=['POST'])
