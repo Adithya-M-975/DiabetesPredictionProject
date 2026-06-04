@@ -83,7 +83,23 @@ def predict():
         'index.html',
         prediction_text=result
     )
-    
+
+@app.route('/history')
+def history():
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM predictions")
+
+    records = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        'history.html',
+        records=records
+    ) 
 
 # Run app
 if __name__ == "__main__":
