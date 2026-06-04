@@ -94,11 +94,28 @@ def history():
 
     records = cursor.fetchall()
 
+    total_predictions = len(records)
+
+    diabetic_count = sum(
+        1 for row in records
+        if row[9] == "Diabetic"
+    )
+
+    non_diabetic_count = sum(
+        1 for row in records
+        if row[9] == "Non-Diabetic"
+    )
+
+
+
     conn.close()
 
     return render_template(
         'history.html',
-        records=records
+        records=records,
+        total_predictions=total_predictions,
+        diabetic_count=diabetic_count,
+        non_diabetic_count=non_diabetic_count
     ) 
 
 # Run app
