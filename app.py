@@ -66,6 +66,7 @@ def predict():
     ))
 
     conn.commit()
+    print("Data saved:", result)
     conn.close()
 
     return render_template(
