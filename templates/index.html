@@ -1,65 +1,135 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Diabetes Prediction System</title>
 
     <style>
 
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #74ebd5, #ACB6E5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+        body{
+            margin:0;
+            padding:0;
+            font-family:Arial,sans-serif;
+
+            background:linear-gradient(
+                -45deg,
+                #0f2027,
+                #203a43,
+                #2c5364,
+                #1abc9c
+            );
+
+            background-size:400% 400%;
+            animation:gradientMove 10s ease infinite;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            min-height:100vh;
+            overflow-x:hidden;
         }
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
-            width: 350px;
-            text-align: center;
+        @keyframes gradientMove{
+            0%{
+                background-position:0% 50%;
+            }
+            50%{
+                background-position:100% 50%;
+            }
+            100%{
+                background-position:0% 50%;
+            }
         }
 
-        h1 {
-            margin-bottom: 25px;
-            color: #222;
+        .medical-bg{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            z-index:-1;
         }
 
-        input {
-            width: 90%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
+        .medical-bg span{
+            position:absolute;
+            color:white;
+            opacity:0.3;
+            font-size:60px;
+            animation:float 12s linear infinite;
         }
 
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
+        @keyframes float{
+            from{
+                transform:translateY(100vh);
+            }
+
+            to{
+                transform:translateY(-150px);
+            }
         }
 
-        button:hover {
-            background-color: #218838;
+        .container{
+            background:white;
+            width:450px;
+            padding:30px;
+            border-radius:20px;
+            box-shadow:0px 0px 30px rgba(0,0,0,0.3);
+            text-align:center;
         }
 
-        .result {
-            margin-top: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
+        h1{
+            color:#0a4d68;
+            margin-bottom:25px;
+        }
+
+        input{
+            width:90%;
+            padding:12px;
+            margin:8px 0;
+            border:1px solid #ccc;
+            border-radius:10px;
+            font-size:14px;
+        }
+
+        .btn{
+            background:#00b894;
+            color:white;
+            border:none;
+            padding:12px 20px;
+            border-radius:10px;
+            cursor:pointer;
+            margin:8px;
+            font-size:15px;
+        }
+
+        .btn:hover{
+            background:#00997a;
+        }
+
+        .result{
+            margin-top:20px;
+            font-size:24px;
+            font-weight:bold;
+            color:#222;
+        }
+
+        .confidence{
+            margin-top:10px;
+            font-size:18px;
+            color:#444;
+        }
+
+        .logout-btn{
+          text-decoration:none;
+          background:#dc3545;
+          color:white;
+          padding:10px 15px;
+          border-radius:10px;
+          font-size:14px;
+        }
+
+         .logout-btn:hover{
+          background:#b02a37;
         }
 
     </style>
@@ -68,11 +138,32 @@
 
 <body>
 
+    <div class="medical-bg">
+
+        <span style="left:5%">✚</span>
+        <span style="left:15%">❤</span>
+        <span style="left:25%">🩺</span>
+        <span style="left:35%">💊</span>
+        <span style="left:45%">✚</span>
+        <span style="left:55%">🩸</span>
+        <span style="left:65%">❤</span>
+        <span style="left:75%">💉</span>
+        <span style="left:85%">🩺</span>
+        <span style="left:95%">✚</span>
+
+    </div>
+
     <div class="container">
 
-        <h1>Diabetes Prediction</h1>
+        <div style="text-align:right;">
+            <a href="/logout" class="logout-btn">
+                🚪 Logout
+            </a>
+        </div>
 
-        <form action="/predict" method="POST" autocomplete="off">
+        <h1>🏥 Diabetes Risk Prediction System</h1>
+
+        <form action="/predict" method="POST">
 
             <input type="text" name="pregnancies" placeholder="Pregnancies" required>
 
@@ -90,31 +181,37 @@
 
             <input type="text" name="age" placeholder="Age" required>
 
-            <button type="submit">Predict</button>
-            <button type="button" onclick="window.location.href='/'">
-              Clear
-            </button> 
-            
-            <br><br>
+            <br>
+
+            <button type="submit" class="btn">
+                Predict
+            </button>
+
+            <button type="button" class="btn"
+                onclick="window.location.href='/'">
+                Clear
+            </button>
+
+            <br>
 
             <a href="/history">
-               <button type="button">
-                 View History
-               </button>
+                <button type="button" class="btn">
+                    View History
+                </button>
             </a>
-    
 
         </form>
 
         {% if prediction_text %}
+
         <div class="result">
-           {{ prediction_text }}
-
-           <br><br>
-
-           Confidence:
-           {{ confidence }}%
+            {{ prediction_text }}
         </div>
+
+        <div class="confidence">
+            Confidence: {{ confidence }}%
+        </div>
+
         {% endif %}
 
     </div>

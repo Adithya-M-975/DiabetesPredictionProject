@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+from datetime import datetime
 import pickle
 import numpy as np
 import sqlite3
@@ -16,20 +17,102 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     return render_template('login.html')
-@app.route('/login', methods=['POST'])
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
 
-    username = request.form['username']
-    password = request.form['password']
+    if request.method == 'POST':
 
-    if username == "admin" and password == "1234":
-        return render_template('index.html')
+        username = request.form['username']
+        password = request.form['password']
 
-    return "Invalid Username or Password"
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
 
+        cursor.execute(
+             "SELECT * FROM users WHERE username=? AND password=?",
+              (username, password)
+         )
+
+        user = cursor.fetchone()
+
+        conn.close()
+
+        if user:
+         return render_template('index.html')
+
+        return render_template(
+          'login.html',
+          error="Invalid Username or Password"
+        )
+
+    return render_template('login.html')
+
+@app.route('/predict_page')
+def predict_page():
+    return render_template('index.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+
+    if request.method == 'POST':
+
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            return "Passwords do not match"
+
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute(
+                "INSERT INTO users (username,email,password) VALUES (?,?,?)",
+                (username,email,password)
+            )
+
+            conn.commit()
+
+        except:
+            return "Username already exists"
+
+        finally:
+            conn.close()
+
+        return redirect('/')
+
+    return render_template('register.html')
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+
+    if request.method == 'POST':
+        email = request.form['email']
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT password FROM users WHERE email=?",
+            (email,)
+        )
+
+        user = cursor.fetchone()
+        conn.close()
+        if user:
+            return render_template(
+                'forgot_password.html',
+                password=user[0]
+            )
+
+    return render_template('forgot_password.html')
+  
 # Prediction route
 @app.route('/predict', methods=['POST'])
-def predict():
+def predict():  
 
     pregnancies = float(request.form.get('pregnancies', 0))
     glucose = float(request.form.get('glucose', 0))
@@ -52,6 +135,8 @@ def predict():
         result = "Diabetic"
     else:
         result = "Non-Diabetic"
+
+    current_time = datetime.now().strftime("%d-%m-%Y %I:%M %p")    
     
     confidence = round(
         max(probability[0]) * 100,
@@ -61,13 +146,15 @@ def predict():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
+    current_time = datetime.now().strftime("%d-%m-%Y %I:%M %p")
+    
     cursor.execute("""
     INSERT INTO predictions
     (pregnancies, glucose, bloodpressure,
     skinthickness, insulin, bmi,
-    dpf, age, prediction)
+    dpf, age, prediction, timestamp)
 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """,
     (
         pregnancies,
@@ -78,7 +165,8 @@ def predict():
         bmi,
         dpf,
         age,
-        result
+        result,
+        current_time
     ))
 
     conn.commit()
@@ -124,6 +212,10 @@ def history():
         non_diabetic_count=non_diabetic_count,
         age_labels=age_labels
     )
+
+@app.route('/logout')
+def logout():
+    return redirect('/')
 
 # Run app
 if __name__ == "__main__":

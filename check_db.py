@@ -3,7 +3,10 @@ import sqlite3
 conn = sqlite3.connect('database.db')
 cursor = conn.cursor()
 
-cursor.execute("SELECT * FROM predictions")
-print(cursor.fetchall())
+cursor.execute("PRAGMA table_info(predictions)")
+
+result = cursor.fetchall()
+
+print(result)
 
 conn.close()

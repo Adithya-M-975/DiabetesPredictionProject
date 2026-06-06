@@ -2,69 +2,281 @@
 <html>
 <head>
     <title>Prediction History</title>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+    body{
+        margin:0;
+        padding:20px;
+        font-family:Arial,sans-serif;
+        background:linear-gradient(
+            135deg,
+            #0f2027,
+            #203a43,
+            #2c5364
+        );
+        min-height:100vh;
+    }
+
+    .medical-bg{
+        position:fixed;
+        width:100%;
+        height:100%;
+        top:0;
+        left:0;
+        z-index:-1;
+    }
+
+    .medical-bg span{
+        position:absolute;
+        color:rgba(255,255,255,0.1);
+        font-size:40px;
+        animation:float 10s linear infinite;
+    }
+
+    @keyframes float{
+        from{
+            transform:translateY(100vh);
+        }
+        to{
+            transform:translateY(-100px);
+        }
+    }
+
+    .dashboard-title{
+        text-align:center;
+        color:white;
+        margin-bottom:30px;
+    }
+
+    .stats-container{
+        display:flex;
+        justify-content:center;
+        gap:25px;
+        flex-wrap:wrap;
+        margin-bottom:40px;
+    }
+
+    .stat-card{
+        background:white;
+        width:220px;
+        padding:20px;
+        border-radius:15px;
+        text-align:center;
+        box-shadow:0px 0px 15px rgba(0,0,0,0.3);
+    }
+
+    .diabetic h2{
+        color:red;
+    }
+
+    .non-diabetic h2{
+        color:green;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+        background:white;
+        border-radius:15px;
+        overflow:hidden;
+    }
+
+    th{
+        background:#0a4d68;
+        color:white;
+        padding:12px;
+    }
+
+    td{
+        padding:10px;
+        text-align:center;
+    }
+
+    tr:nth-child(even){
+        background:#f2f2f2;
+    }
+
+    .back-btn{
+     display:inline-block;
+     margin-bottom:20px;
+     padding:10px 20px;
+     background:rgba(255,255,255,0.2);
+     backdrop-filter:blur(10px);
+     color:white;
+     text-decoration:none;
+     border-radius:10px;
+     border:1px solid rgba(255,255,255,0.3);
+    }
+
+    .back-btn:hover{
+     background:rgba(255,255,255,0.3);
+    }
+
+    .chart-container{
+     display:flex;
+     justify-content:center;
+     gap:30px;
+     flex-wrap:wrap;
+     margin-bottom:40px;
+    }
+
+    .chart-card{
+     background:rgba(255,255,255,0.15);
+     backdrop-filter:blur(15px);
+     border-radius:20px;
+     padding:20px;
+     width:90%;
+     max-width:600px;
+     margin:auto;
+     box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .table-card{
+     background:rgba(255,255,255,0.15);
+     backdrop-filter:blur(15px);
+     border-radius:20px;
+     padding:25px;
+     margin:40px auto;
+     width:90%;
+     box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    .chart-title{
+     color:white;
+     text-align:center;
+     margin-bottom:15px;
+    }
+
+    .logout-btn{
+     text-decoration:none;
+     background:#dc3545;
+     color:white;
+     padding:10px 15px;
+     border-radius:10px;
+     font-size:14px;
+    }
+
+    .logout-btn:hover{
+     background:#b02a37;
+    }
+
+    </style>
+
 </head>
 <body>
 
-<h2>Prediction History</h2>
-<h3>Total Predictions: {{ total_predictions }}</h3>
+    <div class="medical-bg">
 
-<h3>Diabetic Cases: {{ diabetic_count }}</h3>
+      <span style="left:10%">✚</span>
+      <span style="left:25%">❤</span>
+      <span style="left:40%">🩺</span>
+      <span style="left:60%">💊</span>
+      <span style="left:80%">✚</span>
 
-<h3>Non-Diabetic Cases: {{ non_diabetic_count }}</h3>
-<h3>Prediction Analytics</h3>
+    </div>
 
-<canvas id="pieChart" width="100" height="100"></canvas>
+    <div class="container">
+
+    <div style="text-align:right;">
+        <a href="/logout" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+
+<div class="dashboard-title">
+    <h1>📊 Diabetes Prediction Analytics Dashboard</h1>
+    <a href="/predict_page" class="back-btn">← Back to Prediction</a>
+</div>
+
+<div class="stats-container">
+
+    <div class="stat-card">
+        <h2>{{ total_predictions }}</h2>
+        <p>Total Predictions</p>
+    </div>
+
+    <div class="stat-card diabetic">
+        <h2>{{ diabetic_count }}</h2>
+        <p>Diabetic Cases</p>
+    </div>
+
+    <div class="stat-card non-diabetic">
+        <h2>{{ non_diabetic_count }}</h2>
+        <p>Non-Diabetic Cases</p>
+    </div>
+
+</div>
+
+<h3 style="color:white;text-align:center;">
+    Prediction Analytics
+</h3>
+
+<div style="width:350px;margin:auto;">
+    <canvas id="pieChart"></canvas>
+</div>
+
 <br><br>
 
-<h3>Age Distribution</h3>
+<div class="chart-card">
+    <h3 class="chart-title">Age Distribution</h3>
+    <canvas id="barChart" height="180"></canvas>
+</div>
 
-<canvas id="barChart" width="600" height="250"></canvas>
-<hr>
+<br><br>
 
-<table border="1">
+<div class="table-card">
 
-<tr>
-    <th>ID</th>
-    <th>Pregnancies</th>
-    <th>Glucose</th>
-    <th>Blood Pressure</th>
-    <th>Skin Thickness</th>
-    <th>Insulin</th>
-    <th>BMI</th>
-    <th>DPF</th>
-    <th>Age</th>
-    <th>Prediction</th>
-</tr>
+<h2 class="chart-title">
+    Prediction Records
+</h2>
 
-{% for row in records %}
 
-<tr>
-    <td>{{ row[0] }}</td>
-    <td>{{ row[1] }}</td>
-    <td>{{ row[2] }}</td>
-    <td>{{ row[3] }}</td>
-    <td>{{ row[4] }}</td>
-    <td>{{ row[5] }}</td>
-    <td>{{ row[6] }}</td>
-    <td>{{ row[7] }}</td>
-    <td>{{ row[8] }}</td>
-    <td>{{ row[9] }}</td>
-</tr>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Pregnancies</th>
+            <th>Glucose</th>
+            <th>Blood Pressure</th>
+            <th>Skin Thickness</th>
+            <th>Insulin</th>
+            <th>BMI</th>
+            <th>DPF</th>
+            <th>Age</th>
+            <th>Prediction</th>
+            <th>Date & Time</th>
+        </tr>
 
-{% endfor %}
+        {% for row in records %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+            <td>{{ row[6] }}</td>
+            <td>{{ row[7] }}</td>
+            <td>{{ row[8] }}</td>
+            <td>{{ row[9] }}</td>
+            <td>{{ row[10] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 
-</table>
 <script>
-
 const ctx = document.getElementById('pieChart');
 
-new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['Diabetic', 'Non-Diabetic'],
-        datasets: [{
-            data: [
+new Chart(ctx,{
+    type:'pie',
+    data:{
+        labels:['Diabetic','Non-Diabetic'],
+        datasets:[{
+            data:[
                 {{ diabetic_count }},
                 {{ non_diabetic_count }}
             ]
@@ -72,21 +284,21 @@ new Chart(ctx, {
     }
 });
 
-const barCtx = document.getElementById('barChart');
+const barCtx=document.getElementById('barChart');
 
-new Chart(barCtx, {
-    type: 'bar',
-    data: {
-        labels: [
+new Chart(barCtx,{
+    type:'bar',
+    data:{
+        labels:[
             {% for age in age_labels %}
-                "{{ age }}",
+            "{{ age }}",
             {% endfor %}
         ],
-        datasets: [{
-            label: 'Age',
-            data: [
+        datasets:[{
+            label:'Age',
+            data:[
                 {% for age in age_labels %}
-                    {{ age }},
+                {{ age }},
                 {% endfor %}
             ]
         }]
