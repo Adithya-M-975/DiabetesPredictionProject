@@ -91,6 +91,35 @@
             font-size:14px;
         }
 
+        
+
+         input{
+            width:90%;
+            padding:12px;
+            margin:10px;
+            border-radius:10px;
+            border:1px solid #ccc;
+        }
+
+/* ADD THIS HERE */
+         select{
+            width:90%;
+            padding:12px;
+            margin:10px;
+            border-radius:10px;
+            border:1px solid #ccc;
+            font-size:14px;
+        }
+
+        button{
+            background:#00b894;
+            color:white;
+            border:none;
+            padding:12px 25px;
+            border-radius:10px;
+            cursor:pointer;
+        }
+
         .btn{
             background:#00b894;
             color:white;
@@ -165,6 +194,14 @@
 
         <form action="/predict" method="POST">
 
+            <input type="text" name="patient_name" placeholder="Patient Name" required>
+
+             <select name="gender" required>
+               <option value="">Select Gender</option>
+               <option value="Male">Male</option>
+               <option value="Female">Female</option>
+               <option value="Other">Other</option>
+             </select>
             <input type="text" name="pregnancies" placeholder="Pregnancies" required>
 
             <input type="text" name="glucose" placeholder="Glucose" required>

@@ -114,6 +114,9 @@ def forgot_password():
 @app.route('/predict', methods=['POST'])
 def predict():  
 
+    patient_name = request.form['patient_name']
+    gender = request.form['gender']
+
     pregnancies = float(request.form.get('pregnancies', 0))
     glucose = float(request.form.get('glucose', 0))
     bloodpressure = float(request.form.get('bloodpressure', 0))
@@ -147,14 +150,14 @@ def predict():
     cursor = conn.cursor()
 
     current_time = datetime.now().strftime("%d-%m-%Y %I:%M %p")
-    
+
     cursor.execute("""
     INSERT INTO predictions
     (pregnancies, glucose, bloodpressure,
     skinthickness, insulin, bmi,
-    dpf, age, prediction, timestamp)
+    dpf, age, prediction, timestamp, patient_name, gender)
 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """,
     (
         pregnancies,
@@ -166,7 +169,9 @@ def predict():
         dpf,
         age,
         result,
-        current_time
+        current_time,
+        patient_name,
+        gender
     ))
 
     conn.commit()

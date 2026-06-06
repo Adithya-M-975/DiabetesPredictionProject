@@ -238,6 +238,8 @@
     <table>
         <tr>
             <th>ID</th>
+            <th>Patient Name</th>
+            <th>Gender</th>
             <th>Pregnancies</th>
             <th>Glucose</th>
             <th>Blood Pressure</th>
@@ -253,6 +255,8 @@
         {% for row in records %}
         <tr>
             <td>{{ row[0] }}</td>
+            <td>{{ row[11] }}</td>
+            <td>{{ row[12] }}</td>
             <td>{{ row[1] }}</td>
             <td>{{ row[2] }}</td>
             <td>{{ row[3] }}</td>
