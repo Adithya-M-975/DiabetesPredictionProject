@@ -141,10 +141,9 @@ def predict():
 
     current_time = datetime.now().strftime("%d-%m-%Y %I:%M %p")    
     
-    confidence = round(
-        max(probability[0]) * 100,
-        2
-    )
+    diabetic_probability = probability[0][1]*100
+
+    confidence = round(diabetic_probability,2)
 
     if confidence <= 40:
       risk_level = "Low"
