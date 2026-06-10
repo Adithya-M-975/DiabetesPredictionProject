@@ -145,6 +145,96 @@ def predict():
         max(probability[0]) * 100,
         2
     )
+
+    if confidence <= 40:
+      risk_level = "Low"
+
+    elif confidence <= 70:
+      risk_level = "Moderate"
+
+    else:
+      risk_level = "High"
+
+    recommendations = []
+
+    if confidence <= 40:
+
+        recommendations.append(
+        "Maintain a balanced diet"
+    )
+
+        recommendations.append(
+        "Exercise regularly"
+    )
+
+        recommendations.append(
+        "Stay hydrated"
+    )
+
+        recommendations.append(
+        "Continue routine health checkups"
+    )
+
+    elif confidence <= 70:
+
+       recommendations.append(
+        "Reduce sugar intake"
+    )
+
+       recommendations.append(
+        "Increase physical activity"
+    )
+
+       recommendations.append(
+        "Monitor blood glucose periodically"
+    )
+
+       recommendations.append(
+        "Maintain healthy body weight"
+    )
+
+    else:
+
+       recommendations.append(
+        "Consult a healthcare professional"
+    )
+
+       recommendations.append(
+        "Monitor blood glucose regularly"
+    )
+
+       recommendations.append(
+        "Follow a diabetic-friendly diet"
+    )
+
+       recommendations.append(
+        "Exercise at least 30 minutes daily"
+    )
+
+       recommendations.append(
+        "Avoid sugary foods and beverages"
+    )
+       
+    if bmi > 30:
+       recommendations.append(
+        "Weight management is strongly recommended."
+    )
+
+    if glucose > 180:
+       recommendations.append(
+        "Your glucose level is significantly elevated."
+    )
+
+    if bloodpressure > 140:
+      recommendations.append(
+        "Monitor blood pressure regularly."
+    )
+
+    if age > 50:
+      recommendations.append(
+        "Schedule frequent diabetes screenings."
+    )   
+
     
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -181,7 +271,9 @@ def predict():
     return render_template(
         'index.html',
         prediction_text=result,
-        confidence=confidence
+        confidence=confidence,
+        risk_level=risk_level,
+        recommendations=recommendations 
     )
 
 @app.route('/history')

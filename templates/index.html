@@ -69,12 +69,13 @@
         }
 
         .container{
-            background:white;
-            width:450px;
-            padding:30px;
-            border-radius:20px;
-            box-shadow:0px 0px 30px rgba(0,0,0,0.3);
-            text-align:center;
+          width:500px;
+          padding:30px;
+          border-radius:20px;
+          background:rgba(255,255,255,0.08);
+          backdrop-filter:blur(15px);
+          box-shadow:0px 8px 32px rgba(0,0,0,0.3);
+          text-align:center;
         }
 
         h1{
@@ -83,32 +84,30 @@
         }
 
         input{
-            width:90%;
-            padding:12px;
-            margin:8px 0;
-            border:1px solid #ccc;
-            border-radius:10px;
-            font-size:14px;
+          width:90%;
+          padding:12px;
+          margin:10px;
+          border:none;
+          border-radius:10px;
+          font-size:14px;
+          background:rgba(255,255,255,0.15);
+          color:white;
         }
 
-        
-
-         input{
-            width:90%;
-            padding:12px;
-            margin:10px;
-            border-radius:10px;
-            border:1px solid #ccc;
+        input::placeholder{
+          color:#ddd;
         }
 
 /* ADD THIS HERE */
          select{
-            width:90%;
-            padding:12px;
-            margin:10px;
-            border-radius:10px;
-            border:1px solid #ccc;
-            font-size:14px;
+          width:90%;
+          padding:12px;
+          margin:10px;
+          border:none;
+          border-radius:10px;
+          font-size:14px;
+          background:rgba(255,255,255,0.15);
+          color: rgba(255,255,255,0.15);
         }
 
         button{
@@ -136,10 +135,65 @@
         }
 
         .result{
-            margin-top:20px;
-            font-size:24px;
-            font-weight:bold;
-            color:#222;
+          margin-top:20px;
+          font-size:24px;
+          font-weight:bold;
+          color:white;
+        }
+
+        .risk-box{
+           margin-top:20px;
+           padding:15px;
+           border-radius:12px;
+           color:white;
+           font-size:20px;
+           font-weight:bold;
+        }
+
+        .low-risk{
+           background:#28a745;
+        }
+
+        .moderate-risk{
+           background:#ffc107;
+           color:black;
+        }
+
+        .high-risk{
+           background:#dc3545;
+        }
+
+        .recommendation-box{
+          margin-top:20px;
+          padding:20px;
+          border-radius:20px;
+          background:rgba(255,255,255,0.15);
+          backdrop-filter:blur(10px);
+          color:white;
+          text-align:left;
+        }
+
+        .recommendation-box h3{
+          text-align:center;
+        }
+
+        .recommendation-box li{
+          margin-bottom:10px;
+        }
+
+        .insight-box{
+          margin-top:20px;
+          padding:20px;
+          border-radius:20px;
+          background:rgba(255,255,255,0.15);
+          backdrop-filter:blur(10px);
+          color:white;
+          text-align:left;
+        }
+
+        .insight-box h3{
+          text-align:center;
+          margin-bottom:10px;
         }
 
         .confidence{
@@ -238,20 +292,74 @@
             </a>
 
         </form>
-
+            
         {% if prediction_text %}
 
         <div class="result">
+
+            Prediction:
             {{ prediction_text }}
-        </div>
 
-        <div class="confidence">
-            Confidence: {{ confidence }}%
-        </div>
+            <br><br>
 
-        {% endif %}
+            Confidence:
+            {{ confidence }}%
 
-    </div>
+            <br><br>
+
+           <div class="risk-box {% if risk_level == 'Low' %}low-risk{% elif risk_level == 'Moderate' %}moderate-risk{% else %}high-risk{% endif %}">
+              {{ risk_level }} Risk
+           </div>
+
+           <div class="recommendation-box">
+
+              <h3>Health Recommendations</h3>
+
+              <ul>
+                 {% for item in recommendations %}
+                    <li>{{ item }}</li>
+                 {% endfor %}
+              </ul>
+
+           </div>
+
+           <div class="insight-box">
+
+              <h3>Medical Insight</h3>
+
+              {% if risk_level == 'Low' %}
+
+                 <p>
+                     The patient's parameters indicate a low probability of diabetes.
+                     Current health indicators appear stable. Maintaining a healthy
+                     lifestyle and routine medical checkups is recommended.
+                 </p>
+
+              {% elif risk_level == 'Moderate' %}
+
+                 <p>
+                     The patient's parameters indicate moderate diabetes risk.
+                     Some health indicators may require attention. Lifestyle
+                     modifications and periodic monitoring are recommended.
+                 </p>
+
+              {% else %}
+
+                 <p>
+                     The patient's parameters indicate a high probability of diabetes.
+                     Multiple risk factors may be contributing to the prediction.
+                     Professional medical evaluation and regular monitoring are advised.
+                 </p>
+
+              {% endif %}
+
+           </div>
+
+       </div>
+
+       {% endif %}
+
+   </div>    
 
 </body>
 </html>
